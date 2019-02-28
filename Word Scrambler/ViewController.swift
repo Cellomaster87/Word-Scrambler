@@ -55,6 +55,10 @@ class ViewController: UITableViewController {
     
     func submit(_ answer: String) {
         let lowerAnswer = answer.lowercased()
+        
+        let errorTitle: String
+        let errorMessage: String
+        
         // Check: if the word can be made from the given letters...
         if isPossible(word: lowerAnswer) {
             // ... if it has already been used
@@ -66,9 +70,25 @@ class ViewController: UITableViewController {
                     // If all good: add the word to the usedWords array insert the new row in the table view
                     let indexPath = IndexPath(row: 0, section: 0)
                     tableView.insertRows(at: [indexPath], with: .automatic)
+                    
+                    return
+                } else {
+                    errorTitle = "Word not recognised"
+                    errorMessage = "You can't just make them up, you know!"
                 }
+            } else {
+                errorTitle = "Word used already"
+                errorMessage = "Be more original!"
             }
+        } else {
+            guard let title = title?.lowercased() else { return }
+            errorTitle = "Word not possible"
+            errorMessage = "You can't spell that word from \(title)."
         }
+        
+        let alertController = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alertController, animated: true)
     }
     
     func isPossible(word: String) -> Bool {

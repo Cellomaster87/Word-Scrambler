@@ -54,7 +54,33 @@ class ViewController: UITableViewController {
     }
     
     func submit(_ answer: String) {
-        
+        let lowerAnswer = answer.lowercased()
+        // Check: if the word can be made from the given letters...
+        if isPossible(word: lowerAnswer) {
+            // ... if it has already been used
+            if isOriginal(word: lowerAnswer) {
+                // ... if it is an Englishword
+                if isReal(word: lowerAnswer) {
+                    usedWords.insert(answer, at: 0)
+                    
+                    // If all good: add the word to the usedWords array insert the new row in the table view
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    tableView.insertRows(at: [indexPath], with: .automatic)
+                }
+            }
+        }
+    }
+    
+    func isPossible(word: String) -> Bool {
+        return true
+    }
+    
+    func isOriginal(word: String) -> Bool {
+        return true
+    }
+    
+    func isReal(word: String) -> Bool {
+        return true
     }
     
     // MARK: - TableView Data Source

@@ -63,9 +63,9 @@ class ViewController: UITableViewController {
             if isOriginal(word: lowerAnswer) {
                 // ... if it is an Englishword
                 if isReal(word: lowerAnswer) {
-                    usedWords.insert(answer, at: 0)
+                    // If all good: add the word to the usedWords array & insert the new row in the table view
+                    usedWords.insert(lowerAnswer, at: 0)
                     
-                    // If all good: add the word to the usedWords array insert the new row in the table view
                     let indexPath = IndexPath(row: 0, section: 0)
                     tableView.insertRows(at: [indexPath], with: .automatic)
                     
@@ -103,7 +103,7 @@ class ViewController: UITableViewController {
     }
     
     func isReal(word: String) -> Bool {
-        guard word.count > 3 else { return false }
+        guard word.count >= 3 else { return false }
         
         let checker = UITextChecker()
         let range = NSRange(location: 0, length: word.utf16.count)

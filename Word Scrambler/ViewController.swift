@@ -12,6 +12,7 @@ class ViewController: UITableViewController {
     // MARK: Properties
     var allWords = [String]()
     var usedWords = [String]()
+    var currentWord: String?
 
     // MARK: - View management
     override func viewDidLoad() {
@@ -30,14 +31,26 @@ class ViewController: UITableViewController {
             allWords = ["silkworm"]
         }
         
-        startGame()
+        let defaults = UserDefaults.standard
+        if let presentWord = defaults.object(forKey: "presentWord") as? String,
+            let savedWords = defaults.object(forKey: "savedWords") as? [String] {
+            title = presentWord
+            currentWord = presentWord
+            usedWords = savedWords
+            print("Loaded old game!")
+        } else {
+            startGame()
+        }
     }
     
     // MARK: - Methods
     @objc func startGame() {
         title = allWords.randomElement()
+        currentWord = title
         usedWords.removeAll(keepingCapacity: true)
+        save()
         tableView.reloadData()
+        print("Started new game!")
     }
     
     @objc func promptForAnswer() {
@@ -65,6 +78,7 @@ class ViewController: UITableViewController {
                 if isReal(word: lowerAnswer) {
                     // If all good: add the word to the usedWords array & insert the new row in the table view
                     usedWords.insert(lowerAnswer, at: 0)
+                    save()
                     
                     let indexPath = IndexPath(row: 0, section: 0)
                     tableView.insertRows(at: [indexPath], with: .automatic)
@@ -109,7 +123,6 @@ class ViewController: UITableViewController {
         let range = NSRange(location: 0, length: word.utf16.count)
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
         
-        
         return misspelledRange.location == NSNotFound
     }
     
@@ -117,6 +130,12 @@ class ViewController: UITableViewController {
         let alertController = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default))
         present(alertController, animated: true)
+    }
+    
+    func save() {
+        let defaults = UserDefaults.standard
+        defaults.set(currentWord, forKey: "presentWord")
+        defaults.set(usedWords, forKey: "savedWords")
     }
     
     // MARK: - TableView Data Source
